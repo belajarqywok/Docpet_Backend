@@ -1,6 +1,7 @@
 from datetime import datetime
 import uuid
-from pydantic import BaseModel, EmailStr, constr
+from pydantic import BaseModel, EmailStr, constr, Field
+from enum import Enum
 
 
 class UserBaseSchema(BaseModel):
@@ -27,3 +28,18 @@ class UserResponse(UserBaseSchema):
     id: uuid.UUID
     created_at: datetime
     updated_at: datetime
+
+class GenderEnum(str, Enum):
+    Jantan = 'Jantan'
+    Betina = 'Betina'
+
+class PetBaseSchema(BaseModel):
+    name: constr(max_length=20) = Field(..., description="Pet's name")
+    gender: GenderEnum = Field(..., description="Pet's gender")
+    age: str = Field(..., description="Pet's age")
+
+class CreatePetSchema(PetBaseSchema):
+    pass
+
+class UpdatePetSchema(PetBaseSchema):
+    pass
