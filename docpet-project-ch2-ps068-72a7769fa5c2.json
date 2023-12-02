@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "docpet-project-ch2-ps068",
+  "private_key_id": "72a7769fa5c22487383252fc44a5d1fa33e31706",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDEqu3RJoV36AO9\nrW0naNlWmtoGToWSYzTWwyFHK0GCS6dnd8uXkjlSmZUR2Qwb7aD+Lk+EjDjGxBWw\ns2CmeKmRBKuyhpnC6uN297VW7dfJN8zH4QcpUpsCMyb6xZ2oCEzuvLU4PVXuhjL+\nR67X1n1lB8QYvnuUe5yswb5WA9mGL9BqnBKOVaW9oUd+E9qpHwdDYRg0yx2s4xOu\nvz/jy9kEZVGETzZ76mPdaUKgG7FgH6suTUKkD+Da1EnRSww/nAl+CiKktwYfLta2\nbv6S1WosprMHLlGuTz0VhQMEBms6FzZlqR3wjbAejI18h6l56UqfgzFTMenkiMoI\nHbHykQkFAgMBAAECggEAC5Y7Ja/nJtMwvpDvAJE7q3plxFUFp0QYswXTD5jbprFj\nXwQJUYLyxUw5d/rkLOm5VaW6gfIq+YGdpN1PS++JpKV0TN6DmklxdlW4xYgvcZz2\nf9jhAve+xzM7+tlVZQwm0DKmW0u4ejGbjoIAVJoVUDRUGCsc0njdQwu1IDyLfngh\nzz9apdHKWLXFveIMVwXouCWfzPoogCGtrTwUUDUN24lVw3cyK8G4pK6uM8ay5G9V\nczljT9UHg/4Kim0jxG8wO+xgqxSTNm3evZc9KOStico1tbio75lKnMYodM6No/vD\nZqxx7k313EymJy8QUqgJ8pJSItLmHHFcMbDkFWmtUQKBgQD2KJL1gnz3sInL0CCN\nalvXvUYRt/mJZX4fppP9b5e7bQJ2UGo2fPeuyWxy8amqBZuc3KoDwglLc/OZxhBb\nYBUsB1+9yCCJHm8q703CpGOdK4I84TuzTevMa7WyJZlNPQHup+xpsOV7kFhl0OPa\nCBEx+JpOxiW/641rgnL9+DTkWQKBgQDMh9FccNlubI69dksdLAyK+462nv0V2GqX\nK/oMw5upqF5cbQmtdw9Sq9+JLxwGX07EuIDxhFSegXuZJmaaRUTZ4DiD/izlLxZ4\nWlHh8N0/FsBQRdBoaYuG+vpMBSgUN8FIxeQt9gw+LI1uxHo3iLdWLBR5rMrckLx5\nNHmwMJDkjQKBgEA4ca7Prl7Ilgqwb+21E+UDIma5AsdPzUngobd7B7EETaIkdLFm\nhQ/6yOpsFgGfmOuhvlFgrCAdTi6ON/I+7QchnV7b+XEMmaAv8q+XR83XbhEIChVL\nfPtGFo81s/sssXZcJRel6RkFnapihy9471OEMm3e0DZz899alzmfKd1xAoGBAKte\nVQXOK/AAlyyZs9/ya2P72BydY9Js7QpSt4UAVCm3v7BTT9t+uWD8TyRDS4jvTDE5\nohg6Vygjt2qfqTIzPbgLzW6Shg1VAc+/ZYIY7VeR+XqItFD3tgdXvGX7oBQojxMp\nc8EquiFR9QLNLtXfADX8Yv97ztE1mCU52YfNeWl1AoGBALLTsn2lNJdVuDrHlOHm\niF6Yo3O3GuNQT+pXCCEa0JxRcyzKwALGe9HnhBt2jrU6CA0B3lTQpGbg71nFrK57\nn0+GIPylHIWcY+T4d3Yw64tTHbYrRiY9UP1GXbAzAEaBcRLrgFgyEuVe0+kjquoI\ntXRy+jRYdYVJb8GsbrhqRNbl\n-----END PRIVATE KEY-----\n",
+  "client_email": "docpet-bucket-sa@docpet-project-ch2-ps068.iam.gserviceaccount.com",
+  "client_id": "108503646899343738781",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/docpet-bucket-sa%40docpet-project-ch2-ps068.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
