@@ -5,7 +5,10 @@ This guide walks you through setting up a FastAPI project with PostgreSQL using 
 ## Prerequisites
 
 - Docker installed on your machine
-- Python and pip installed
+- Python and pip install
+```bash
+$ pip install -r requirements.txt
+```
 
 ## Step 1: Init and Setup Project
 
