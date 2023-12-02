@@ -7,7 +7,7 @@ This guide walks you through setting up a FastAPI project with PostgreSQL using 
 - Docker installed on your machine
 - Python and pip installed
 
-## Step 1: Start PostgreSQL Docker Container
+## Step 1: Init and Setup Project
 
 Run the following commands in your terminal:
 
@@ -68,7 +68,7 @@ $ alembic revision --autogenerate -m "create users table"
 $ alembic upgrade head
 ```
 
-## Step 9: Apply Database Changes
+## Step 9: View Documentation
 FastAPI automatically generates API documentation complying with OpenAPI standards.
 ```bash
 Visit http://localhost:8000/docs to explore the API documentation.
