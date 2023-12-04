@@ -4,7 +4,6 @@ services:
     image: docpet_be_svc
     build:
       context: ./
-      shm_size: 1gb
       dockerfile: ./deployment/development.dockerfile
       labels :
         role : "docpet backend service"
@@ -34,4 +33,3 @@ volumes:
 
 networks:
   network_services :
-    name : network_services
