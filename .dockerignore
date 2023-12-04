@@ -1,0 +1,8 @@
+/deployment
+/venv
+
+Makefile
+readMe.md
+.gitignore
+.env-example
+Docpet_Backend.code-workspace
