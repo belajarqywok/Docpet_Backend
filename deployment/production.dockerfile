@@ -14,5 +14,8 @@ RUN pip3 install -r requirements.txt
 
 COPY . /etc/docpet_backend_service/
 
+RUN alembic upgrade head && \
+        alembic revision --autogenerate -m "migrate"
+
 EXPOSE 80
 CMD [ "/bin/bash", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 80 --workers 10" ]
