@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
-from app.routers import user, auth, upload, pet, disease_detection
+from app.routers import user, auth, upload, pet, disease_detection, doctor
 
 app = FastAPI()
 
@@ -22,6 +22,7 @@ app.include_router(auth.router, tags=['Auth'], prefix='/api/auth')
 app.include_router(user.router, tags=['Users'], prefix='/api/users')
 app.include_router(upload.router, tags=['Upload'], prefix='/api/upload')
 app.include_router(pet.router, tags=['Pets'], prefix='/api/pets')
+app.include_router(doctor.router, tags=['Doctors'], prefix='/api/doctors')
 
 app.include_router(
     tags = ['Disease Detection'],
