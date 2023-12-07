@@ -32,7 +32,7 @@ async def get_doctor(doctor_id: uuid.UUID):
     finally:
         db.close()        
 
-@router.post("/", response_model=DoctorResponse)
+@router.post("/")
 async def create_doctor(doctor: CreateDoctorSchema):
     db = SessionLocal()
     try:
@@ -40,7 +40,7 @@ async def create_doctor(doctor: CreateDoctorSchema):
         db.add(new_doctor)
         db.commit()
         db.refresh(new_doctor)
-        return new_doctor.__dict__
+        return {"message": "Doctor created successfully", "doctor": new_doctor.__dict__}
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
@@ -57,7 +57,7 @@ async def update_doctor(doctor_id: uuid.UUID, doctor: UpdateDoctorSchema):
         for attr, value in doctor.dict().items():
             setattr(existing_doctor, attr, value)
         db.commit()
-        return existing_doctor.__dict__
+        return {"message": "Doctor updated successfully", "doctor": existing_doctor.__dict__}
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
