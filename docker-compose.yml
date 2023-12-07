@@ -1,18 +1,5 @@
-version: '3'
+version: '3.3'
 services:
-  docpet_backend_service:
-    image: docpet_be_svc
-    build:
-      context: ./
-      dockerfile: ./deployment/development.dockerfile
-    ports:
-      - 80:8000
-    restart: always
-    env_file:
-      - ./.env
-    networks:
-      - network_services
-
   postgres:
     image: postgres
     container_name: postgres
@@ -23,11 +10,6 @@ services:
       - ./.env
     volumes:
       - postgres-db:/var/lib/postgresql/data
-    networks :
-        - network_services
 
 volumes:
   postgres-db:
-
-networks:
-  network_services :

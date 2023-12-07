@@ -13,7 +13,8 @@ WORKDIR /etc/docpet_backend_service
 RUN python3 -m pip install --upgrade pip
 
 # Install the Requirements
-COPY requirements/linux.requirements.txt /etc/docpet_backend_service/
+COPY requirements/linux.requirements.txt \
+    /etc/docpet_backend_service/
 
 RUN pip3 install -r linux.requirements.txt
 
