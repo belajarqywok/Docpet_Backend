@@ -1,7 +1,9 @@
 from google.cloud import storage
 
 def create_gcs_client():
-    return storage.Client.from_service_account_json('docpet-project-ch2-ps068-72a7769fa5c2.json')
+    return storage.Client.from_service_account_json(
+        json_credentials_path = 'docpet-project-ch2-ps068-a53f10c5c713.json'
+    )
 
 def upload_blob(bucket_name, source_file_name, destination_blob_name):
     """Uploads a file to the bucket."""

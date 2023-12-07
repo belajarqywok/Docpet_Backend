@@ -1,0 +1,97 @@
+name: Production Pipeline
+
+on:
+  push:
+    branches:
+      - abacadabra
+    tags:
+      - '*'
+
+permissions:
+  contents: read
+
+jobs:
+  # Build
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    environment: build
+
+    env:
+      service: docpet-backend-service
+      region: ${{ env.REGION }}
+      project_id: ${{ env.GOOGLE_PROJECT_ID }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        credentials_json: ${{ secrets.CONTAINER_REGISTRY_CREDENTIAL }}
+
+    - name: Setup Google Cloud
+      uses: google-github-actions/setup-gcloud@v1
+
+    - name: Setup Docker
+      run: gcloud auth configure-docker --quiet
+
+    # Push Docker Image to Google Container Registry
+    # --- DEPRECATED ---
+    # Container Registry is deprecated. After May 15, 2024,
+    # Artifact Registry will host images for the gcr.io domain
+    # in projects without previous Container Registry usage.
+    - name: Push Docker Image to Google Container Registry
+      run: |
+        git clone https://github.com/belajarqywok/Docpet_Backend
+        cd Docpet_Backend
+
+        echo "${{ secrets.GOOGLE_BUCKET_CREDENTIAL }}" > sa_bucket.json
+
+        sed -i 's/docpet-project-ch2-ps068-a53f10c5c713.json/ \
+          sa_bucket.json/g' app/gcs.py
+
+        docker build --tag $service:latest \
+          --file deployment/production.dockerfile .
+
+        docker tag $service:latest \
+          gcr.io/$project_id/$service:latest
+
+        docker push gcr.io/$project_id/$service:latest
+
+    # - name: Push Docker Image to Google Artifact Registry
+    #   env:
+    #     GOOGLE_PROJECT: ${{ secrets.GOOGLE_PROJECT }}
+    #   run: |
+    #     gcloud auth configure-docker asia-southeast2-docker.pkg.dev
+    #     docker build -t asia-southeast2-docker.pkg.dev/$GOOGLE_PROJECT/capstone/nginx:latest .
+    #     docker push asia-southeast2-docker.pkg.dev/$GOOGLE_PROJECT/capstone/nginx:latest
+
+  # Deploy
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: deploy
+    needs: build
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        credentials_json: ${{ secrets.CLOUD_RUN_CREDENTIAL }}
+
+    - name: Setup Google Cloud
+      uses: google-github-actions/setup-gcloud@v1
+
+    # Deploy to Google Cloud Run
+    - name: Deploy to Google Cloud Run
+      run: |
+        terraform init
+        terraform apply -no-color -compact-warnings -auto-approve \
+          -var="discord_id=xxx" \
+          -var="discord_token=xxx"
+        
