@@ -1,8 +1,8 @@
-"""create doctor table
+"""migrate
 
-Revision ID: 0497a4a855b2
-Revises: f063f9a60848
-Create Date: 2023-12-07 22:31:31.335257
+Revision ID: 64174712dd01
+Revises: d4b392539c2c
+Create Date: 2023-12-08 04:14:27.348117
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = '0497a4a855b2'
-down_revision = 'f063f9a60848'
+revision = '64174712dd01'
+down_revision = 'd4b392539c2c'
 branch_labels = None
 depends_on = None
 
@@ -25,7 +25,7 @@ def upgrade() -> None:
     sa.Column('rating', sa.String(), nullable=False),
     sa.Column('role', sa.String(), server_default='Hewan', nullable=False),
     sa.Column('role_detail', sa.String(), nullable=False),
-    sa.Column('date', sa.String(), nullable=False),
+    sa.Column('day', sa.String(), nullable=True),
     sa.Column('time', sa.String(), nullable=False),
     sa.Column('location', sa.String(), nullable=False),
     sa.Column('university', sa.String(), nullable=False),
@@ -33,7 +33,7 @@ def upgrade() -> None:
     sa.Column('created_at', sa.TIMESTAMP(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated_at', sa.TIMESTAMP(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('price')
+    sa.UniqueConstraint('name')
     )
     # ### end Alembic commands ###
 
