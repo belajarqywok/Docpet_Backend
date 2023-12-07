@@ -1,8 +1,27 @@
-/deployment
+# Development
 /venv
 
 Makefile
-readMe.md
-.gitignore
 .env-example
 Docpet_Backend.code-workspace
+
+# Git & Github
+/.github
+
+README.md
+.gitignore
+
+# Terraform
+/.terraform
+/modules
+
+main.tf
+modules.tf
+variables.tf
+.terraform.lock.hcl
+
+# Docker
+/deployment
+
+.dockerignore
+docker-compose.yml

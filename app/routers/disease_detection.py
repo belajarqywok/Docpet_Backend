@@ -12,7 +12,7 @@ router = APIRouter()
 async def disease_detection(
     file: UploadFile = File(...), 
     _: str = Depends(require_user)
-):
+) -> JSONResponse:
     try:
         file.file.seek(0, 2)
         file_size = file.file.tell()
@@ -22,7 +22,7 @@ async def disease_detection(
         # 1 kb = 1024 bytes
         # 1 mb = 1024 kb
         if file_size > 10 * 1024 * 1024:
-            # more than 10 mb
+            # if more than 10 mb
             return JSONResponse(
                 content = {
                     'message': 'file too large (MAX: 10 MB)',
@@ -65,6 +65,7 @@ async def disease_detection(
         )
 
     except Exception as e:
+        print(e)
         return JSONResponse(
             content = {
                 'message': 'Internal Server Error',
