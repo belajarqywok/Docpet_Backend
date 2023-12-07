@@ -1,25 +1,25 @@
 # PostgreSQL Password Secret
-module "pgsql_password_secret" {
+module "postgres_password_secret" {
     source = "./modules/secrets"
     secret_project_id = var.project_id
-    secret_id = "db-password"
-    secret_data = var.pgsql_password
+    secret_id = "postgres-password-secret"
+    secret_data = var.postgres_password
 }
 
-# Access Token Secret
-module "access_token_secret" {
+# JWT Public Key Secret
+module "public_key_secret" {
     source = "./modules/secrets"
     secret_project_id = var.project_id
-    secret_id = "access-token-secret"
-    secret_data = var.access_token
+    secret_id = "public-key-secret"
+    secret_data = var.jwt_public_key
 }
 
-# Refresh Token Secret
-module "refresh_token_secret" {
+# JWT Private Key Secret
+module "private_key_secret" {
     source = "./modules/secrets"
     secret_project_id = var.project_id
-    secret_id = "refresh-token-secret"
-    secret_data = var.refresh_token
+    secret_id = "private-key-secret"
+    secret_data = var.jwt_private_key
 }
 
 # Docpet Backend Service (Cloud Run)
@@ -30,11 +30,13 @@ module "docpet_service_cloud_run" {
     cloud_run_project = var.project_id
 
     cloud_run_description = <<-EOT
-        backend service
+        Docpet Backend Service
     EOT
 
     cloud_run_location = var.region
     cloud_run_ingress  = "INGRESS_TRAFFIC_ALL"
+
+    # cloud_run_revision = var.revision_name
 
     cloud_run_service_account = var.service_account
     
@@ -51,9 +53,9 @@ module "docpet_service_cloud_run" {
         http_port = 80
 
         period_seconds = 240
-        timeout_seconds = 5
-        failure_threshold = 5
-        initial_delay_seconds = 10
+        timeout_seconds = 240
+        failure_threshold = 20
+        initial_delay_seconds = 240
     }
 
     cloud_run_liveness_probe = {
@@ -80,16 +82,28 @@ module "docpet_service_cloud_run" {
     cloud_run_vpc_access_egress = "PRIVATE_RANGES_ONLY"
 
     cloud_run_envars = {
-        JWT_ALGORITHM = "HS512"
-        JWT_ACCESS_TOKEN_EXPIRE = "1"
-        JWT_REFRESH_TOKEN_EXPIRE = "7"
-        JWT_REFRESH_TOKEN_SECRET = module.refresh_token_secret.secret_id_output
-        JWT_ACCESS_TOKEN_SECRET  = module.access_token_secret.secret_id_output
+        DATABASE_PORT = var.postgres_port
+        POSTGRES_USER = var.postgres_user
+        POSTGRES_DB = var.postgres_db
+        POSTGRES_HOST = var.postgres_host
+        POSTGRES_HOSTNAME = var.postgres_hostname
 
-        POSTGRES_DB = "dbname"
-        POSTGRES_HOST = "10.8.0.16"
-        POSTGRES_PORT = "5432"
-        POSTGRES_USER = "postgres"
-        POSTGRES_PASS = module.pgsql_password_secret.secret_id_output
+        ACCESS_TOKEN_EXPIRES_IN = var.access_token_expires
+        REFRESH_TOKEN_EXPIRES_IN = var.refresh_token_expires
+        JWT_ALGORITHM = var.jwt_algorithm
+        CLIENT_ORIGIN = "*"
+
+        JWT_PUBLIC_KEY = module.public_key_secret.secret_id_output
+        JWT_PRIVATE_KEY = module.private_key_secret.secret_id_output
+        POSTGRES_PASSWORD = module.postgres_password_secret.secret_id_output
     }
+}
+
+# Cloud Run Service IAM
+resource "google_cloud_run_service_iam_binding" "cloud_run_service_iam" {
+    project = var.project_id
+    location = var.region
+    service = module.docpet_service_cloud_run.cloud_run_service_name_output
+    role = "roles/run.invoker"
+    members = ["allUsers"]
 }

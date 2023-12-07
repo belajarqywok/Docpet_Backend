@@ -1,11 +1,3 @@
-# Cloud Run Service IAM
-resource "google_cloud_run_service_iam_binding" "cloud_run_service_iam" {
-    location = google_cloud_run_v2_service.cloud_run_service.location
-    service = google_cloud_run_v2_service.cloud_run_service.name
-    role = "roles/run.invoker"
-    members = ["allUsers"]
-}
-
 # Cloud Run Service
 resource "google_cloud_run_v2_service" "cloud_run_service" {
     name = var.cloud_run_name
@@ -16,6 +8,7 @@ resource "google_cloud_run_v2_service" "cloud_run_service" {
     ingress = var.cloud_run_ingress
 
     template {
+        # revision = var.cloud_run_revision
         service_account = var.cloud_run_service_account
 
         containers {
@@ -35,17 +28,17 @@ resource "google_cloud_run_v2_service" "cloud_run_service" {
                 startup_cpu_boost = var.cloud_run_cpu_boost
             }
 
-            startup_probe {
-                period_seconds = var.cloud_run_startup_probe["period_seconds"]
-                timeout_seconds = var.cloud_run_startup_probe["timeout_seconds"]
-                failure_threshold = var.cloud_run_startup_probe["failure_threshold"]
-                initial_delay_seconds = var.cloud_run_startup_probe["initial_delay_seconds"]
+            # startup_probe {
+            #     period_seconds = var.cloud_run_startup_probe["period_seconds"]
+            #     timeout_seconds = var.cloud_run_startup_probe["timeout_seconds"]
+            #     failure_threshold = var.cloud_run_startup_probe["failure_threshold"]
+            #     initial_delay_seconds = var.cloud_run_startup_probe["initial_delay_seconds"]
 
-                http_get {
-                    path = var.cloud_run_startup_probe["http_path"]
-                    port = var.cloud_run_startup_probe["http_port"]
-                }
-            }
+            #     http_get {
+            #         path = var.cloud_run_startup_probe["http_path"]
+            #         port = var.cloud_run_startup_probe["http_port"]
+            #     }
+            # }
 
             liveness_probe {
                 period_seconds = var.cloud_run_liveness_probe["period_seconds"]
@@ -61,28 +54,8 @@ resource "google_cloud_run_v2_service" "cloud_run_service" {
 
             # Environment Variables
             env {
-                name = "JWT_ALGORITHM"
-                value = var.cloud_run_envars["JWT_ALGORITHM"]
-            }
-
-            env {
-                name = "JWT_ACCESS_TOKEN_EXPIRE"
-                value = var.cloud_run_envars["JWT_ACCESS_TOKEN_EXPIRE"]
-            }
-
-            env {
-                name = "JWT_REFRESH_TOKEN_EXPIRE"
-                value = var.cloud_run_envars["JWT_REFRESH_TOKEN_EXPIRE"]
-            }
-
-            env {
-                name = "POSTGRES_HOST"
-                value = var.cloud_run_envars["POSTGRES_HOST"]
-            }
-
-            env {
-                name = "POSTGRES_PORT"
-                value = var.cloud_run_envars["POSTGRES_PORT"]
+                name = "DATABASE_PORT"
+                value = var.cloud_run_envars["DATABASE_PORT"]
             }
 
             env {
@@ -95,36 +68,66 @@ resource "google_cloud_run_v2_service" "cloud_run_service" {
                 value = var.cloud_run_envars["POSTGRES_DB"]
             }
 
+            env {
+                name = "POSTGRES_HOST"
+                value = var.cloud_run_envars["POSTGRES_HOST"]
+            }
+
+            env {
+                name = "POSTGRES_HOSTNAME"
+                value = var.cloud_run_envars["POSTGRES_HOSTNAME"]
+            }
+
+            env {
+                name = "ACCESS_TOKEN_EXPIRES_IN"
+                value = var.cloud_run_envars["ACCESS_TOKEN_EXPIRES_IN"]
+            }
+
+            env {
+                name = "REFRESH_TOKEN_EXPIRES_IN"
+                value = var.cloud_run_envars["REFRESH_TOKEN_EXPIRES_IN"]
+            }
+
+            env {
+                name = "JWT_ALGORITHM"
+                value = var.cloud_run_envars["JWT_ALGORITHM"]
+            }
+
+            env {
+                name = "CLIENT_ORIGIN"
+                value = var.cloud_run_envars["CLIENT_ORIGIN"]
+            }
+
 
             # Secrets
             env {
-                name = "JWT_ACCESS_TOKEN_SECRET"
+                name = "JWT_PUBLIC_KEY"
                 value_source {
                     secret_key_ref {
                         # secret = google_secret_manager_secret.secret.secret_id
-                        secret = var.cloud_run_envars["JWT_ACCESS_TOKEN_SECRET"]
+                        secret = var.cloud_run_envars["JWT_PUBLIC_KEY"]
                         version = "1"
                     }
                 }
             }
 
             env {
-                name = "JWT_REFRESH_TOKEN_SECRET"
+                name = "JWT_PRIVATE_KEY"
                 value_source {
                     secret_key_ref {
                         # secret = google_secret_manager_secret.secret.secret_id
-                        secret = var.cloud_run_envars["JWT_REFRESH_TOKEN_SECRET"]
+                        secret = var.cloud_run_envars["JWT_PRIVATE_KEY"]
                         version = "1"
                     }
                 }
             }
 
             env {
-                name = "POSTGRES_PASS"
+                name = "POSTGRES_PASSWORD"
                 value_source {
                     secret_key_ref {
                         # secret = google_secret_manager_secret.secret.secret_id
-                        secret = var.cloud_run_envars["POSTGRES_PASS"]
+                        secret = var.cloud_run_envars["POSTGRES_PASSWORD"]
                         version = "1"
                     }
                 }
@@ -161,8 +164,4 @@ resource "google_cloud_run_v2_service" "cloud_run_service" {
         percent = var.cloud_run_traffic_percent
         type = var.cloud_run_traffic_type
     }
-
-    # depends_on = [
-    #     var.cloud_run_depends_on["DB_PASSWORD_VERSION"]
-    # ]
 }
