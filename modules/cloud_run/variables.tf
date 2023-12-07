@@ -35,6 +35,13 @@ variable "cloud_run_ingress" {
     description = "value"
 }
 
+# Cloud Run Revision
+variable "cloud_run_revision" {
+    type = string
+    default = "revision-service-xxxxx"
+    description = "Cloud Run Revision <type: String>"
+}
+
 # Cloud Run Service Account
 variable "cloud_run_service_account" {
     type = string
@@ -207,36 +214,43 @@ variable "cloud_run_vpc_access_egress" {
 # Cloud Run Environment Variables
 variable "cloud_run_envars" {
     type = map(string)
+    sensitive = true
 
     default = {
-        JWT_ALGORITHM = "HS512"
-        JWT_ACCESS_TOKEN_EXPIRE = "1"
-        JWT_REFRESH_TOKEN_EXPIRE = "7"
-        JWT_REFRESH_TOKEN_SECRET = "SECRET VALUE"
-        JWT_ACCESS_TOKEN_SECRET  = "SECRET VALUE"
-
-        POSTGRES_DB = "coba_capstone"
-        POSTGRES_HOST = "localhost"
-        POSTGRES_PORT = "5432"
+        DATABASE_PORT = "5432"
         POSTGRES_USER = "postgres"
-        POSTGRES_PASS = "SECRET VALUE"
+        POSTGRES_DB = "dbname"
+        POSTGRES_HOST = "postgres"
+        POSTGRES_HOSTNAME = "127.0.0.1"
+
+        ACCESS_TOKEN_EXPIRES_IN = "15"
+        REFRESH_TOKEN_EXPIRES_IN = "60"
+        JWT_ALGORITHM = "RS256"
+        CLIENT_ORIGIN = "*"
+
+        JWT_PUBLIC_KEY = "<jwt public key>"
+        JWT_PRIVATE_KEY = "<jwt private key>"
+        POSTGRES_PASSWORD = "secret value"
     }
 
     description =<<-EOT
         Cloud Run Environment Variables <type: map(String)>
         Example:
             cloud_run_envars = {
-                JWT_ALGORITHM = "HS512"
-                JWT_ACCESS_TOKEN_EXPIRE = "1"
-                JWT_REFRESH_TOKEN_EXPIRE = "7"
-                JWT_REFRESH_TOKEN_SECRET = "SECRET VALUE"
-                JWT_ACCESS_TOKEN_SECRET  = "SECRET VALUE"
-
-                POSTGRES_DB = "coba_capstone"
-                POSTGRES_HOST = "localhost"
-                POSTGRES_PORT = "5432"
+                DATABASE_PORT = "5432"
                 POSTGRES_USER = "postgres"
-                POSTGRES_PASS = "SECRET VALUE"
+                POSTGRES_DB = "docpet"
+                POSTGRES_HOST = "postgres"
+                POSTGRES_HOSTNAME = "127.0.0.1"
+
+                ACCESS_TOKEN_EXPIRES_IN = "15"
+                REFRESH_TOKEN_EXPIRES_IN = "60"
+                JWT_ALGORITHM = "RS256"
+                CLIENT_ORIGIN = "*"
+
+                JWT_PUBLIC_KEY = "<jwt public key>"
+                JWT_PRIVATE_KEY = "<jwt private key>"
+                POSTGRES_PASSWORD = "secret value"
             }
     EOT
 }

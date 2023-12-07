@@ -3,7 +3,7 @@ name: Production Pipeline
 on:
   push:
     branches:
-      - abacadabra
+      - main
     tags:
       - '*'
 
@@ -19,8 +19,7 @@ jobs:
 
     env:
       service: docpet-backend-service
-      region: ${{ env.REGION }}
-      project_id: ${{ env.GOOGLE_PROJECT_ID }}
+      project_id: docpet-project-ch2-ps068
 
     steps:
     - name: Checkout
@@ -44,13 +43,12 @@ jobs:
     # in projects without previous Container Registry usage.
     - name: Push Docker Image to Google Container Registry
       run: |
-        git clone https://github.com/belajarqywok/Docpet_Backend
+        git clone https://github.com/CH2-PS068/Docpet_Backend
         cd Docpet_Backend
 
-        echo "${{ secrets.GOOGLE_BUCKET_CREDENTIAL }}" > sa_bucket.json
+        echo '${{ secrets.GOOGLE_BUCKET_CREDENTIAL }}' > sa_bucket.json
 
-        sed -i 's/docpet-project-ch2-ps068-a53f10c5c713.json/ \
-          sa_bucket.json/g' app/gcs.py
+        sed -i 's/docpet-project-ch2-ps068-a53f10c5c713.json/sa_bucket.json/g' app/gcs.py
 
         docker build --tag $service:latest \
           --file deployment/production.dockerfile .
@@ -72,8 +70,11 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    environment: deploy
     needs: build
+
+    env:
+      service: docpet-backend-service
+      project_id: docpet-project-ch2-ps068
 
     steps:
     - name: Checkout
@@ -90,8 +91,53 @@ jobs:
     # Deploy to Google Cloud Run
     - name: Deploy to Google Cloud Run
       run: |
+        gcloud run services delete docpet-backend-service --platform=managed \
+          --region=asia-southeast2 --quiet
+
+        gcloud secrets delete postgres-password-secret \
+          --project=docpet-project-ch2-ps068 --quiet
+
+        gcloud secrets delete private-key-secret \
+          --project=docpet-project-ch2-ps068 --quiet
+
+        gcloud secrets delete public-key-secret \
+          --project=docpet-project-ch2-ps068 --quiet
+
+        git clone https://github.com/CH2-PS068/Docpet_Backend
+        cd Docpet_Backend
+
         terraform init
-        terraform apply -no-color -compact-warnings -auto-approve \
-          -var="discord_id=xxx" \
-          -var="discord_token=xxx"
+
+        terraform apply -no-color -auto-approve \
+          -var="service_account=${{ secrets.SERVICE_ACCOUNT }}" \
+          -var="service_container=gcr.io/$project_id/$service:latest" \
+          -var="vpc_access_connector=test" \
+          -var="postgres_password=${{ secrets.POSTGRES_PASSWORD }}" \
+          -var="postgres_port=${{ secrets.POSTGRES_PORT }}" \
+          -var="postgres_user=${{ secrets.POSTGRES_USER }}" \
+          -var="postgres_db=${{ secrets.POSTGRES_DB }}" \
+          -var="postgres_host=${{ secrets.POSTGRES_HOST }}" \
+          -var="postgres_hostname=${{ secrets.POSTGRES_HOSTNAME }}" \
+          -var="access_token_expires=${{ secrets.ACCESS_TOKEN_EXP }}" \
+          -var="refresh_token_expires=${{ secrets.REFRESH_TOKEN_EXP }}" \
+          -var="jwt_algorithm=${{ secrets.JWT_ALGORITHM }}" \
+          -var="jwt_public_key=${{ secrets.JWT_PUBLIC_KEY }}" \
+          -var="jwt_private_key=${{ secrets.JWT_PRIVATE_KEY }}"
+
+    # Push the latest Info to Discord
+    - name: Push the latest Info to Discord
+      run: |
+        wget https://gist.githubusercontent.com/belajarqywok/d1e12e8485dd947382ab083b7f6ad2c2/raw/3c54d38016aa7c7e3d2704bf35761913f4166448/discord_payload.json
+
+        ENDPOINT=$(gcloud run services describe docpet-backend-service \
+          --platform=managed --region=asia-southeast2 \
+          --format="value(status.url)" | tr -d '[:space:]')
+
+        ENDPOINT_ESCAPED=$(echo "$ENDPOINT" | sed 's/[\/&]/\\&/g')
+        sed -i "s|ENDPOINT|$ENDPOINT_ESCAPED|g" discord_payload.json
+
+        curl -X POST https://discord.com/api/webhooks/${{ secrets.DISCORD_ID }}/${{ secrets.DISCORD_TOKEN }} \
+          -H "Content-Type: application/json" \
+          -d @discord_payload.json
+
         
