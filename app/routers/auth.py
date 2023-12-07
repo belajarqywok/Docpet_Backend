@@ -9,11 +9,9 @@ from ..database import get_db
 from app.oauth2 import AuthJWT
 from ..config import settings
 
-
 router = APIRouter()
 ACCESS_TOKEN_EXPIRES_IN = settings.ACCESS_TOKEN_EXPIRES_IN
 REFRESH_TOKEN_EXPIRES_IN = settings.REFRESH_TOKEN_EXPIRES_IN
-
 
 @router.post('/register', status_code=status.HTTP_201_CREATED, response_model=schemas.UserResponse)
 async def create_user(payload: schemas.CreateUserSchema, db: Session = Depends(get_db)):
