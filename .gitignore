@@ -130,10 +130,11 @@ dmypy.json
 
 # Terraform
 /.terraform/providers/registry.terraform.io
-.terraform.lock.hcl
 
 # Credentials
 docpet-project-ch2-ps068-a53f10c5c713.json
+container-registry-sa.json
+cloudrun-sa.json
 
 # Development
 envtest.bat
