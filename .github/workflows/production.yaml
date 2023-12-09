@@ -46,7 +46,7 @@ jobs:
         git clone https://github.com/CH2-PS068/Docpet_Backend
         cd Docpet_Backend
 
-        echo "${{ secrets.GOOGLE_BUCKET_CREDENTIAL }}" > sa_bucket.json
+        echo '${{ secrets.GOOGLE_BUCKET_CREDENTIAL }}' > sa_bucket.json
 
         sed -i 's/docpet-project-ch2-ps068-a53f10c5c713.json/sa_bucket.json/g' app/gcs.py
 
