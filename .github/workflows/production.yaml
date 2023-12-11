@@ -15,7 +15,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    environment: build
+    environment: Production
 
     env:
       service: docpet-backend-service
@@ -127,17 +127,17 @@ jobs:
     # Push the latest Info to Discord
     - name: Push the latest Info to Discord
       run: |
-        wget https://gist.githubusercontent.com/belajarqywok/d1e12e8485dd947382ab083b7f6ad2c2/raw/3c54d38016aa7c7e3d2704bf35761913f4166448/discord_payload.json
+        wget https://gist.githubusercontent.com/belajarqywok/d1e12e8485dd947382ab083b7f6ad2c2/raw/10bc009b91062468c6047e83947fb50ef5830f1d/discord_payload.json
 
         ENDPOINT=$(gcloud run services describe docpet-backend-service \
           --platform=managed --region=asia-southeast2 \
           --format="value(status.url)" | tr -d '[:space:]')
 
-        ENDPOINT_ESCAPED=$(echo "$ENDPOINT" | sed 's/[\/&]/\\&/g')
-        sed -i "s|ENDPOINT|$ENDPOINT_ESCAPED|g" discord_payload.json
+        sed -i "s|ENDPOINT|$(echo "$ENDPOINT" | sed 's/[\/&]/\\&/g')|g" discord_payload.json
+        sed -i "s/MSG/$(echo "${{ github.event.head_commit.message }}" | sed 's/[\/&]/\\&/g')/g" discord_payload.json
+        sed -i "s/DATE/$(echo "${{ github.event.head_commit.timestamp }}" | sed 's/[\/&]/\\&/g')/g" discord_payload.json
 
         curl -X POST https://discord.com/api/webhooks/${{ secrets.DISCORD_ID }}/${{ secrets.DISCORD_TOKEN }} \
           -H "Content-Type: application/json" \
           -d @discord_payload.json
-
         
