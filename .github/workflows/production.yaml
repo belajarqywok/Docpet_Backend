@@ -140,4 +140,8 @@ jobs:
         curl -X POST https://discord.com/api/webhooks/${{ secrets.DISCORD_ID }}/${{ secrets.DISCORD_TOKEN }} \
           -H "Content-Type: application/json" \
           -d @discord_payload.json
+<<<<<<< HEAD
         
+=======
+        
+>>>>>>> 7567821634621d79be9ee65c142d0c5e926d7e4d
