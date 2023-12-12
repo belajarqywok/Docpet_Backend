@@ -124,7 +124,7 @@ jobs:
           -var="jwt_public_key=${{ secrets.JWT_PUBLIC_KEY }}" \
           -var="jwt_private_key=${{ secrets.JWT_PRIVATE_KEY }}"
 
-    # Push the latest Info to Discord
+    # Push the latest Info to Discord 
     - name: Push the latest Info to Discord
       run: |
         wget https://gist.githubusercontent.com/belajarqywok/d1e12e8485dd947382ab083b7f6ad2c2/raw/10bc009b91062468c6047e83947fb50ef5830f1d/discord_payload.json
