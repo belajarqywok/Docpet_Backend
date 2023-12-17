@@ -18,12 +18,12 @@ def image_prediction(image_location: str) -> dict:
 
     model = load_model('./ml_models/model.h5')
 
-    image = load_img(image_location, target_size = (150, 150))
+    image = load_img(image_location, target_size = (224, 224))
 
     x = np.expand_dims(a = img_to_array(image), axis = 0)
     
     images = np.vstack(tup = [x])
-    classes = model.predict(x = images, batch_size = 16)
+    classes = model.predict(x = images, batch_size = 32)
 
     for idx_predict, class_value in enumerate(classes[0]):
         if class_value == 1:
