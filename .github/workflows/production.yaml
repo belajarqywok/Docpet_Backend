@@ -127,16 +127,15 @@ jobs:
     # Push the latest Info to Discord 
     - name: Push the latest Info to Discord
       run: |
-        wget https://gist.githubusercontent.com/belajarqywok/d1e12e8485dd947382ab083b7f6ad2c2/raw/10bc009b91062468c6047e83947fb50ef5830f1d/discord_payload.json
-
         ENDPOINT=$(gcloud run services describe docpet-backend-service \
           --platform=managed --region=asia-southeast2 \
-          --format="value(status.url)" | tr -d '[:space:]')
+          --format="value(status.url)")
 
-        sed -i "s|ENDPOINT|$(echo "$ENDPOINT" | sed 's/[\/&]/\\&/g')|g" discord_payload.json
-        sed -i "s/MSG/$(echo "${{ github.event.head_commit.message }}" | sed 's/[\/&]/\\&/g')/g" discord_payload.json
-        sed -i "s/DATE/$(echo "${{ github.event.head_commit.timestamp }}" | sed 's/[\/&]/\\&/g')/g" discord_payload.json
+        wget https://raw.githubusercontent.com/CH2-PS068/Docpet_Infra/main/services/deploy_info_service/push_notif.lua
 
-        curl -X POST https://discord.com/api/webhooks/${{ secrets.DISCORD_ID }}/${{ secrets.DISCORD_TOKEN }} \
-          -H "Content-Type: application/json" \
-          -d @discord_payload.json 
+        sudo apt install -y lua5.4
+        sudo apt install -y luarocks
+        sudo luarocks install dkjson
+
+        lua push_notif.lua "${{ secrets.DISCORD_ID }}" "${{ secrets.DISCORD_TOKEN }}" "${{ github.event.head_commit.message }}" "${{ github.event.head_commit.timestamp }}" "$ENDPOINT"
+        
