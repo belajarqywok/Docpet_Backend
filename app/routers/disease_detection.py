@@ -1,4 +1,7 @@
 import os
+import time
+import string
+import secrets
 from http import HTTPStatus
 from app.gcs import upload_blob
 from app.oauth2 import require_user
@@ -11,7 +14,7 @@ router = APIRouter()
 @router.post("/")
 async def disease_detection(
     file: UploadFile = File(...), 
-    _: str = Depends(require_user)
+    # _: str = Depends(require_user)
 ) -> JSONResponse:
     try:
         file.file.seek(0, 2)
@@ -52,7 +55,18 @@ async def disease_detection(
         # Prediction Result
         predict_result = image_prediction(file_location)
 
-        upload_blob("docpet-dev-test", file_location, file.filename)
+        timestamp = str(int(time.time()))
+        random_string = ''.join(
+            secrets.choice(string.ascii_letters + string.digits) for _ in range(64)
+        )
+
+        # Upload to Google Cloud Storage
+        upload_blob(
+            bucket_name = "docpet-dev-test",
+            source_file_name = file_location, 
+            destination_blob_name = f"{timestamp}-{random_string}.jpeg"
+        )
+
         os.remove(file_location)
 
         return JSONResponse(

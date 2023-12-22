@@ -16,7 +16,7 @@ def image_prediction(image_location: str) -> dict:
     labels = json.load(open("./ml_models/labels.json")) \
         .get("disease_labels")
 
-    model = load_model('./ml_models/model.h5')
+    model = load_model('./ml_models/model_docpet.h5')
 
     image = load_img(image_location, target_size = (224, 224))
 

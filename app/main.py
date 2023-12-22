@@ -1,6 +1,7 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
+from fastapi.responses import RedirectResponse
+from fastapi.middleware.cors import CORSMiddleware
 from app.routers import user, auth, upload, pet, disease_detection, doctor
 
 app = FastAPI()
@@ -10,26 +11,61 @@ origins = [
 ]
 
 app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    middleware_class = CORSMiddleware,
+    allow_origins = ["*"],
+    allow_methods = ["*"],
+    allow_headers = ["*"],
+    allow_credentials = True
 )
 
+# Auth Routes Group
+app.include_router(
+    tags = ['Auth'],
+    router = auth.router,
+    prefix = '/api/auth'
+)
 
-app.include_router(auth.router, tags=['Auth'], prefix='/api/auth')
-app.include_router(user.router, tags=['Users'], prefix='/api/users')
-app.include_router(upload.router, tags=['Upload'], prefix='/api/upload')
-app.include_router(pet.router, tags=['Pets'], prefix='/api/pets')
-app.include_router(doctor.router, tags=['Doctors'], prefix='/api/doctors')
+# User Routes Group
+app.include_router(
+    tags = ['Users'],
+    router = user.router,
+    prefix = '/api/users'
+)
 
+# Upload Routes Group
+app.include_router(
+    tags = ['Upload'],
+    router = upload.router,
+    prefix = '/api/upload'
+)
+
+# Pet Routes Group
+app.include_router(
+    tags = ['Pets'],
+    router = pet.router,
+    prefix = '/api/pets'
+)
+
+# Doctor Routes Group
+app.include_router(
+    tags = ['Doctors'],
+    router = doctor.router,
+    prefix = '/api/doctors'
+)
+
+# Disease Detection Routes Group
 app.include_router(
     tags = ['Disease Detection'],
     router = disease_detection.router,
     prefix = '/api/disease_detection'
 )
 
-@app.get('/api/checker')
-def root():
+# Main Routes Group
+@app.get('/api/checker', tags = ['Main'])
+def checker():
     return {'message': 'Hello Docpet!'}
+
+@app.get("/", tags = ['Main'])
+def root():
+    return RedirectResponse(url="/docs")
+    
