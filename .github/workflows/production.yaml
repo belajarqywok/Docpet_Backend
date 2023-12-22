@@ -138,4 +138,3 @@ jobs:
         sudo luarocks install dkjson
 
         lua push_notif.lua "${{ secrets.DISCORD_ID }}" "${{ secrets.DISCORD_TOKEN }}" "${{ github.event.head_commit.message }}" "${{ github.event.head_commit.timestamp }}" "$ENDPOINT"
-        
