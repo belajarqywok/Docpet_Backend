@@ -1,0 +1,50 @@
+name: pipeline
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - '*'
+
+jobs:
+  backend_deployment:
+    name: Backend Deployment
+    runs-on: ubuntu-latest
+    environment: Production
+
+    env:
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      SPACE_NAME: docpet_backend_service
+      HF_USERNAME: qywok
+
+    steps:
+      - name: Set global directory
+        run: git config --global --add safe.directory /github/workspace
+
+      - uses: actions/checkout@v3     
+        with:
+          persist-credentials: false
+          fetch-depth: 1000
+
+      - name: Check git status
+        run: git status
+
+      - name: Configure git
+        run: |
+          git config --local user.email "alfariqyraihan@gmail.com"
+          git config --local user.name "qywok"
+
+      - name: Pull changes from remote
+        run: |
+          git pull https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME main || \
+          (git merge --strategy-option theirs)
+
+      - name: Add and commit changes
+        run: |
+          git add -A 
+          git diff-index --quiet HEAD || git commit -m "Backend Deployment"
+
+      - name: Push to Hugging Face
+        run: |
+          git push https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME main --force

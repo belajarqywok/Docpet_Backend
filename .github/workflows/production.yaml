@@ -1,0 +1,140 @@
+name: Production Pipeline
+
+on:
+  push:
+    branches:
+      - aiueo
+    tags:
+      - '*'
+
+permissions:
+  contents: read
+
+jobs:
+  # Build
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    environment: Production
+
+    env:
+      service: docpet-backend-service
+      project_id: docpet-project-ch2-ps068
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        credentials_json: ${{ secrets.CONTAINER_REGISTRY_CREDENTIAL }}
+
+    - name: Setup Google Cloud
+      uses: google-github-actions/setup-gcloud@v1
+
+    - name: Setup Docker
+      run: gcloud auth configure-docker --quiet
+
+    # Push Docker Image to Google Container Registry
+    # --- DEPRECATED ---
+    # Container Registry is deprecated. After May 15, 2024,
+    # Artifact Registry will host images for the gcr.io domain
+    # in projects without previous Container Registry usage.
+    - name: Push Docker Image to Google Container Registry
+      run: |
+        git clone https://github.com/CH2-PS068/Docpet_Backend
+        cd Docpet_Backend
+
+        echo '${{ secrets.GOOGLE_BUCKET_CREDENTIAL }}' > sa_bucket.json
+
+        sed -i 's/docpet-project-ch2-ps068-a53f10c5c713.json/sa_bucket.json/g' app/gcs.py
+
+        docker build --tag $service:latest \
+          --file deployment/production.dockerfile .
+
+        docker tag $service:latest \
+          gcr.io/$project_id/$service:latest
+
+        docker push gcr.io/$project_id/$service:latest
+
+    # - name: Push Docker Image to Google Artifact Registry
+    #   env:
+    #     GOOGLE_PROJECT: ${{ secrets.GOOGLE_PROJECT }}
+    #   run: |
+    #     gcloud auth configure-docker asia-southeast2-docker.pkg.dev
+    #     docker build -t asia-southeast2-docker.pkg.dev/$GOOGLE_PROJECT/capstone/nginx:latest .
+    #     docker push asia-southeast2-docker.pkg.dev/$GOOGLE_PROJECT/capstone/nginx:latest
+
+  # Deploy
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: build
+
+    env:
+      service: docpet-backend-service
+      project_id: docpet-project-ch2-ps068
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        credentials_json: ${{ secrets.CLOUD_RUN_CREDENTIAL }}
+
+    - name: Setup Google Cloud
+      uses: google-github-actions/setup-gcloud@v1
+
+    # Deploy to Google Cloud Run
+    - name: Deploy to Google Cloud Run
+      run: |
+        gcloud run services delete docpet-backend-service --platform=managed \
+          --region=asia-southeast2 --quiet
+
+        gcloud secrets delete postgres-password-secret \
+          --project=docpet-project-ch2-ps068 --quiet
+
+        gcloud secrets delete private-key-secret \
+          --project=docpet-project-ch2-ps068 --quiet
+
+        gcloud secrets delete public-key-secret \
+          --project=docpet-project-ch2-ps068 --quiet
+
+        git clone https://github.com/CH2-PS068/Docpet_Backend
+        cd Docpet_Backend
+
+        terraform init
+
+        terraform apply -no-color -auto-approve \
+          -var="service_account=${{ secrets.SERVICE_ACCOUNT }}" \
+          -var="service_container=gcr.io/$project_id/$service:latest" \
+          -var="vpc_access_connector=test" \
+          -var="postgres_password=${{ secrets.POSTGRES_PASSWORD }}" \
+          -var="postgres_port=${{ secrets.POSTGRES_PORT }}" \
+          -var="postgres_user=${{ secrets.POSTGRES_USER }}" \
+          -var="postgres_db=${{ secrets.POSTGRES_DB }}" \
+          -var="postgres_host=${{ secrets.POSTGRES_HOST }}" \
+          -var="postgres_hostname=${{ secrets.POSTGRES_HOSTNAME }}" \
+          -var="access_token_expires=${{ secrets.ACCESS_TOKEN_EXP }}" \
+          -var="refresh_token_expires=${{ secrets.REFRESH_TOKEN_EXP }}" \
+          -var="jwt_algorithm=${{ secrets.JWT_ALGORITHM }}" \
+          -var="jwt_public_key=${{ secrets.JWT_PUBLIC_KEY }}" \
+          -var="jwt_private_key=${{ secrets.JWT_PRIVATE_KEY }}"
+
+    # Push the latest Info to Discord 
+    - name: Push the latest Info to Discord
+      run: |
+        ENDPOINT=$(gcloud run services describe docpet-backend-service \
+          --platform=managed --region=asia-southeast2 \
+          --format="value(status.url)")
+
+        wget https://raw.githubusercontent.com/CH2-PS068/Docpet_Infra/main/services/deploy_info_service/push_notif.lua
+
+        sudo apt install -y lua5.4
+        sudo apt install -y luarocks
+        sudo luarocks install dkjson
+
+        lua push_notif.lua "${{ secrets.DISCORD_ID }}" "${{ secrets.DISCORD_TOKEN }}" "${{ github.event.head_commit.message }}" "${{ github.event.head_commit.timestamp }}" "$ENDPOINT"
