@@ -1,4 +1,3 @@
-import base64
 from typing import List
 from fastapi import Depends, HTTPException, status
 from fastapi_jwt_auth import AuthJWT
@@ -17,10 +16,8 @@ class Settings(BaseModel):
     authjwt_access_cookie_key: str = 'access_token'
     authjwt_refresh_cookie_key: str = 'refresh_token'
     authjwt_cookie_csrf_protect: bool = False
-    authjwt_public_key: str = base64.b64decode(
-        settings.JWT_PUBLIC_KEY).decode('utf-8')
-    authjwt_private_key: str = base64.b64decode(
-        settings.JWT_PRIVATE_KEY).decode('utf-8')
+    authjwt_public_key: str  = settings.JWT_PUBLIC_KEY
+    authjwt_private_key: str = settings.JWT_PRIVATE_KEY
 
 
 @AuthJWT.load_config
