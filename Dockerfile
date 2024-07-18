@@ -20,7 +20,7 @@ COPY --chown=user . /etc/docpet_backend_service/
 
 RUN wget -O /etc/docpet_backend_service/ml_models/model.h5 https://github.com/belajarqywok/mbadhog/raw/main/model.h5
 
-RUN --chown=user alembic upgrade head
+RUN alembic upgrade head
 
 EXPOSE 7860
 
