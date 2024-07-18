@@ -2,11 +2,11 @@ from datetime import timedelta
 from fastapi import APIRouter, Request, Response, status, Depends, HTTPException
 from pydantic import EmailStr
 
-from app import oauth2
+from api import oauth2
 from .. import schemas, models, utils
 from sqlalchemy.orm import Session
 from ..database import get_db
-from app.oauth2 import AuthJWT
+from api.oauth2 import AuthJWT
 from ..config import settings
 
 router = APIRouter()

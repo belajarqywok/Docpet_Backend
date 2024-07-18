@@ -1,5 +1,5 @@
 from fastapi import UploadFile, File, APIRouter
-from app.gcs import upload_blob
+from api.gcs import upload_blob
 import os
 
 router = APIRouter()

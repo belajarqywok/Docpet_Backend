@@ -1,8 +1,8 @@
 from fastapi import FastAPI
-from app.config import settings
+from api.config import settings
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import user, auth, upload, pet, disease_detection, doctor
+from api.routers import user, auth, upload, pet, disease_detection, doctor
 
 app = FastAPI()
 

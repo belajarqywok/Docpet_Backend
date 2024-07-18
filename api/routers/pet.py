@@ -1,8 +1,8 @@
 import uuid
 from fastapi import APIRouter, HTTPException
-from app.schemas import CreatePetSchema, UpdatePetSchema
-from app.models import Pet
-from app.database import SessionLocal
+from api.schemas import CreatePetSchema, UpdatePetSchema
+from api.models import Pet
+from api.database import SessionLocal
 
 router = APIRouter()
 

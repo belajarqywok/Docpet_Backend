@@ -3,9 +3,9 @@ import time
 import string
 import secrets
 from http import HTTPStatus
-from app.gcs import upload_blob
-from app.oauth2 import require_user
-from app.utils import image_prediction
+from api.gcs import upload_blob
+from api.oauth2 import require_user
+from api.utils import image_prediction
 from fastapi.responses import JSONResponse
 from fastapi import UploadFile, File, Depends, APIRouter
 

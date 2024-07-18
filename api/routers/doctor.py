@@ -1,8 +1,8 @@
 import uuid
 from fastapi import APIRouter, HTTPException
-from app.schemas import CreateDoctorSchema, UpdateDoctorSchema, DoctorResponse
-from app.models import Doctor
-from app.database import SessionLocal
+from api.schemas import CreateDoctorSchema, UpdateDoctorSchema, DoctorResponse
+from api.models import Doctor
+from api.database import SessionLocal
 
 router = APIRouter()
 
