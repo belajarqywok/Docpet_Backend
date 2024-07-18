@@ -18,8 +18,7 @@ RUN pip install --no-cache-dir --upgrade -r linux.requirements.txt
 
 COPY --chown=user . /etc/docpet_backend_service/
 
-RUN --chown=user wget -O /etc/docpet_backend_service/ml_models/model.h5 \
-  https://github.com/belajarqywok/mbadhog/raw/main/model.h5
+RUN wget -O /etc/docpet_backend_service/ml_models/model.h5 https://github.com/belajarqywok/mbadhog/raw/main/model.h5
 
 RUN --chown=user alembic upgrade head
 
