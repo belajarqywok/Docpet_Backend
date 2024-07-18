@@ -5,18 +5,16 @@ LABEL team="cloud-computing-team"
 LABEL backend_engineer="Putu Wira Pratama Putra"
 LABEL Infra_engineer="Al-Fariqy Raihan Azhwar"
 
-RUN useradd -m -u 1000 user
-
 WORKDIR /etc/docpet_backend_service
 
 RUN python3 -m pip install --upgrade pip
 
-COPY --chown=user requirements/linux.requirements.txt \
+COPY requirements/linux.requirements.txt \
     /etc/docpet_backend_service/
 
 RUN pip install --no-cache-dir --upgrade -r linux.requirements.txt
 
-COPY --chown=user . /etc/docpet_backend_service/
+COPY . /etc/docpet_backend_service/
 
 RUN wget -O /etc/docpet_backend_service/ml_models/model.h5 https://github.com/belajarqywok/mbadhog/raw/main/model.h5
 
