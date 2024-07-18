@@ -8,8 +8,6 @@ LABEL Infra_engineer="Al-Fariqy Raihan Azhwar"
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-RUN useradd -m -u 1000 user
-
 WORKDIR /etc/docpet_backend_service
 
 RUN python3 -m pip install --upgrade pip
