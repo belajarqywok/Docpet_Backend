@@ -20,8 +20,6 @@ COPY --chown=user . /etc/docpet_backend_service/
 
 RUN wget -O /etc/docpet_backend_service/ml_models/model.h5 https://github.com/belajarqywok/mbadhog/raw/main/model.h5
 
-RUN alembic upgrade head
-
 EXPOSE 7860
 
-CMD [ "uvicorn app:app --host 0.0.0.0 --port 7860 --workers 30" ]
+CMD [ "alembic upgrade head && uvicorn app:app --host 0.0.0.0 --port 7860 --workers 10" ]
