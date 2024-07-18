@@ -22,4 +22,4 @@ RUN wget -O /etc/docpet_backend_service/ml_models/model.h5 https://github.com/be
 
 EXPOSE 7860
 
-CMD [ "alembic upgrade head && uvicorn app:app --host 0.0.0.0 --port 7860" ]
+CMD [ "sh", "-c", "alembic upgrade head && uvicorn app:app --host 0.0.0.0 --port 7860 --workers 30" ]
