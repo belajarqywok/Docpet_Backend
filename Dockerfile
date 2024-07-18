@@ -17,7 +17,7 @@ RUN pip install --no-cache-dir --upgrade -r linux.requirements.txt
 COPY . /etc/docpet_backend_service/
 
 RUN mkdir -p /etc/docpet_backend_service/temp && \
-    chmod -R 755 /etc/docpet_backend_service/temp
+    chmod -R 777 /etc/docpet_backend_service/temp
 
 RUN wget -O /etc/docpet_backend_service/ml_models/model.h5 https://github.com/belajarqywok/mbadhog/raw/main/model.h5
 
